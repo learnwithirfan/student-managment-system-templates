@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Result System{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-indigo-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="flex items-center text-xl font-bold tracking-wider hover:text-indigo-200 transition">
+                        <span>🎓 ResultSystem</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="hidden md:flex space-x-4">
+                        <a href="{% url 'home' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition">Dashboard</a>
+                        <a href="{% url 'student_list' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition">Students</a>
+                        <a href="{% url 'subject_list' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition">Subjects</a>
+                        <a href="{% url 'result_list' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition">Results</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                    <span class="text-sm text-indigo-200 hidden sm:inline">Hello, <strong class="text-white">{{ user.username }}</strong></span>
+                    <a href="{% url 'settings' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-800 transition">Settings</a>
+                    <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+            <!-- Mobile Menu -->
+            <div class="md:hidden flex justify-around pb-3 border-t border-indigo-800 pt-2 text-xs">
+                <a href="{% url 'home' %}" class="hover:text-indigo-200">Dashboard</a>
+                <a href="{% url 'student_list' %}" class="hover:text-indigo-200">Students</a>
+                <a href="{% url 'subject_list' %}" class="hover:text-indigo-200">Subjects</a>
+                <a href="{% url 'result_list' %}" class="hover:text-indigo-200">Results</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Messages System -->
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg flex items-center justify-between {% if message.tags == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-blue-100 text-blue-800 border-l-4 border-blue-500{% endif %}">
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.remove()" class="text-lg font-bold focus:outline-none">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t py-4 text-center text-sm text-gray-500">
+        &copy; 2026 Student Result Management System. Educational Project.
+    </footer>
+
+</body>
+</html>
