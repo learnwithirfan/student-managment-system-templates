@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Result System{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-150">
+    <div class="px-6 py-8">
+        <div class="text-center mb-6">
+            <span class="text-4xl">🔐</span>
+            <h2 class="text-2xl font-bold text-gray-800 mt-2">Sign In</h2>
+            <p class="text-gray-500 text-sm mt-1">Access the Result Management System</p>
+        </div>
+
+        <form method="POST" action="{% url 'login' %}" class="space-y-4">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="p-3 bg-red-105 border border-red-200 text-red-700 rounded text-sm">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div>
+                <label for="id_username" class="block text-sm font-semibold text-gray-700">Username</label>
+                <input type="text" name="username" id="id_username" required autofocus
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2 border bg-white text-gray-905"
+                       placeholder="Enter username">
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-sm font-semibold text-gray-700">Password</label>
+                <input type="password" name="password" id="id_password" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2 border bg-white text-gray-905"
+                       placeholder="Enter password">
+            </div>
+
+           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-lg transition duration-200 shadow mt-6">
+             Sign In
+           </button>
+
+        </form>
+
+        <div class="mt-6 border-t pt-4 text-center text-xs text-gray-500">
+            <p class="font-semibold text-gray-600">First time logging in?</p>
+            <p class="mt-1">Run <code class="bg-gray-100 px-1 py-0.5 rounded text-red-600">python manage.py createsuperuser</code> in the project directory to create a teaching account.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
