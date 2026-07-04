@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}All Students - Result System{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Students Registry</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage student profiles, search by name/roll number, or filter by batch.</p>
+        </div>
+        <a href="{% url 'add_student' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow transition">
+            + Add Student
+        </a>
+    </div>
+
+    <!-- Filter and Search Bar -->
+<!-- Filter and Search Bar -->
+<form method="GET" action="{% url 'student_list' %}" class="mb-6 flex flex-col md:flex-row gap-3">
+
+    <!-- Search input -->
+    <div class="flex-grow relative">
+        <input type="text" name="search" value="{{ search_query|default:'' }}"
+               placeholder="Search by name or roll number..."
+               class="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900">
+
+        {% if search_query %}
+        <a href="{% url 'student_list' %}" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+            ✕
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Batch filter -->
+    <div>
+        <select name="batch"
+                class="w-full md:w-48 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900">
+            <option value="">All Batches</option>
+            <option value="2022" {% if batch_filter == "2022" %}selected{% endif %}>2022</option>
+            <option value="2023" {% if batch_filter == "2023" %}selected{% endif %}>2023</option>
+            <option value="2024" {% if batch_filter == "2024" %}selected{% endif %}>2024</option>
+        </select>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex gap-2">
+        <button type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+            Apply
+        </button>
+
+        {% if batch_filter or search_query %}
+        <a href="{% url 'student_list' %}"
+           class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg transition text-center">
+            Clear Filters
+        </a>
+        {% endif %}
+    </div>
+</form>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">
+                        Name
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">
+                        Roll No
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">
+                        Batch
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 bg-white">
+                {% for student in students %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ student.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ student.roll_number }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800">
+                            {{ student.batch }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                        <a href="{% url 'student_detail' student.pk %}"
+                           class="inline-block bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition">
+                            View Results
+                        </a>
+                        <a href="{% url 'edit_student' student.pk %}"
+                           class="inline-block border border-yellow-500 text-yellow-600 px-3 py-1.5 rounded hover:bg-yellow-50 transition">
+                            Edit
+                        </a>
+                        <a href="{% url 'delete_student' student.pk %}"
+                           class="inline-block border border-red-500 text-red-600 px-3 py-1.5 rounded hover:bg-red-50 transition">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                        <div class="text-lg font-semibold">No students found.</div>
+                        <p class="text-sm mt-1">Try modifying your search or add a new student profile.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
