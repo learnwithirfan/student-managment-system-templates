@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}All Subjects - Result System{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Subjects Registry</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage all configured subjects and their maximum grading scales.</p>
+        </div>
+        <a href="{% url 'add_subject' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow transition">
+            + Add Subject
+        </a>
+    </div>
+
+    {% if subjects %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">Code</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">Max Marks</th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+                {% for sub in subjects %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ sub.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-655 font-mono text-sm">{{ sub.code }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-805 font-bold">{{ sub.max_marks }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold space-x-3">
+                        <a href="{% url 'edit_subject' sub.pk %}" class="text-yellow-600 hover:text-yellow-800">Edit</a>
+                        <a href="{% url 'delete_subject' sub.pk %}" class="text-red-600 hover:text-red-800">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="py-12 text-center text-gray-500">
+        <span class="text-lg font-semibold">No subjects registered yet.</span>
+        <p class="text-sm mt-1">Add subjects to be able to create student results.</p>
+        <a href="{% url 'add_subject' %}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 mt-4 transition">
+            Add Subject
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

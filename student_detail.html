@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Details - {{ student.name }} - Result System{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Student Info Card -->
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-150 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">👤</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{{ student.name }}</h1>
+                    <p class="text-sm text-gray-505">Roll Number: <code class="bg-gray-100 px-1.5 py-0.5 rounded font-mono text-gray-700 font-semibold">{{ student.roll_number }}</code></p>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <span class="text-sm bg-indigo-100 text-indigo-805 px-3 py-1.5 rounded-lg font-semibold self-start md:self-center">
+                Batch: {{ student.batch }}
+            </span>
+            <a href="{% url 'edit_student' student.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow p-5 border text-center">
+            <span class="text-gray-500 text-sm">Overall Percentage</span>
+            <h2 class="text-3xl font-bold text-indigo-600 mt-1">{{ percentage }}%</h2>
+            <div class="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
+                <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ percentage }}%"></div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow p-5 border text-center">
+            <span class="text-gray-500 text-sm">Total Marks</span>
+            <h2 class="text-3xl font-bold text-green-600 mt-1">{{ total_marks }} <span class="text-sm text-gray-400">/ {{ max_possible_marks }}</span></h2>
+            <p class="text-xs text-gray-400 mt-3">Sum of all entered subjects</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-5 border text-center">
+            <span class="text-gray-500 text-sm">Subjects Status</span>
+            <div class="flex justify-center items-center gap-4 mt-2">
+                <div>
+                    <span class="block text-2xl font-bold text-green-600">{{ passed_subjects }}</span>
+                    <span class="text-xs text-gray-400">Passed</span>
+                </div>
+                <div class="border-l h-8 border-gray-200"></div>
+                <div>
+                    <span class="block text-2xl font-bold text-red-500">{{ failed_subjects }}</span>
+                    <span class="text-xs text-gray-400">Failed</span>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">Passing score is 40%</p>
+        </div>
+    </div>
+
+    <!-- Subject Results Table -->
+    <div class="bg-white rounded-xl shadow overflow-hidden border">
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold text-gray-700">Subject Marks Breakdown</h2>
+            <a href="{% url 'add_result' %}?student={{ student.pk }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition">
+                + Add Score
+            </a>
+        </div>
+
+        {% if results %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Subject</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Subject Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Marks Obtained</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Max Marks</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
+                        <th class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                    {% for r in results %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ r.subject.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ r.subject.code }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-800">{{ r.marks_obtained }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-400">{{ r.subject.max_marks }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if r.marks_obtained >= 40 %}
+                            <span class="bg-green-100 text-green-800 px-2.5 py-1 rounded-full text-xs font-semibold">Pass</span>
+                            {% else %}
+                            <span class="bg-red-100 text-red-800 px-2.5 py-1 rounded-full text-xs font-semibold">Fail</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold space-x-3">
+                            <a href="{% url 'edit_result' r.pk %}" class="text-yellow-600 hover:text-yellow-800">Edit</a>
+                            <a href="{% url 'delete_result' r.pk %}" class="text-red-650 hover:text-red-800">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-12 text-center text-gray-500">
+            No grades entered for this student yet. 
+            <a href="{% url 'add_result' %}?student={{ student.pk }}" class="text-blue-600 hover:underline ml-1">Add first result.</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

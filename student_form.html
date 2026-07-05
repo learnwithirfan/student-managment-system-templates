@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Result System{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white rounded-xl shadow p-6 border">
+    <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-800">{{ title }}</h1>
+        <a href="{% url 'student_list' %}" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold">&larr; Back to List</a>
+    </div>
+
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="p-3 bg-red-100 border border-red-200 text-red-800 rounded text-sm space-y-1">
+            <p class="font-semibold">Please correct the errors below:</p>
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ field.errors.as_text }}</p>
+            {% endif %}
+            {% if field.help_text %}
+            <p class="text-gray-400 text-xs mt-0.5">{{ field.help_text }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="pt-4 flex gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition">
+                Save Student
+            </button>
+            <a href="{% url 'student_list' %}" class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold px-6 py-2.5 rounded-lg transition text-center">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
